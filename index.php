@@ -23,11 +23,36 @@ foreach (query('show tables') as $tables) {
     }
     echo '<h1>formulaire table '.$tables['Tables_in_test'].'</h1>
          <form action="'.$tables['Tables_in_test'].'.php" method="post">';
-    //echo $tables['Tables_in_test'].'<br>';
     $table = query('show full columns from '.$tables['Tables_in_test']);
+
+    foreach ($table as $t) {
+        foreach ($t as $column => $value) {
+            $a = explode('(', $t['Type']);
+            if ($column === 'Field') {
+                switch ($a[0]) {
+                    case 'int':
+                        echo $value.': <input type="number" name="'.$value.'"><br>';
+                        break;
+                    case 'varchar':
+                        echo $value.': <input type="text" name="'.$value.'"><br>';
+                        break;
+                    case 'text':
+                        echo $value.': <textarea name="'.$value.'"></textarea><br>';
+                        break;
+                    case 'tinyint':
+                        echo $value.': <input type="checkbox" name="'.$value.'"><br>';
+                        break;
+                    default:
+                        echo '';
+                        break;
+                }
+            }
+        }
+    }
+
     echo '<button type="submit">Valider le formulaire '.$tables['Tables_in_test'].'</button>
     </form>
     ';
 
-    dump($table);
+    //dump($table);
 }
